@@ -1,0 +1,70 @@
+server:
+
+connection:
+	authenticated as UUID/user when connection established
+
+packet format:	
+	1. message type (2 bytes)
+	2. content dependant on message type
+	   a. ALL arrays (including strings) are prefixed by their length (2 bytes)
+	
+message types:
+	nearby locale request c>s
+		my coordinates
+	nearby locale response s>c
+		locale IDs
+		locale flags (1 byte, includes whether or not it is private)
+		locale names (32 characters)
+		number of people in locale (short)
+	join locale request c>s
+		locale ID
+	join private locale request
+		locale ID
+		locale key (int that is a hashcode of some string)
+	join locale response s>c
+		locale ID
+		boolean success
+		if success, recent posts sent
+	leave locale request c>s
+		locale ID
+	leave locale response s>c
+		locale ID
+	send text post c>s
+		locale ID of destination
+		textual content
+	send image posts c>s
+		locale ID
+		binary image data
+	post response s>c
+		NOT NEEDED, a new text post message will be sent
+	new text post s>c NOTICE
+		locale ID
+		nickname of sender
+		textual content
+	new image post s>c NOTICE
+		locale ID
+		nickname of sender
+		image content
+	create locale request
+		flags byte (if private)
+		locale name
+		locale centerpoint
+		locale radius
+	create locale response
+		failure or success, join implied if success
+		if success, then locale ID
+authentication messages:
+	nickname request c>s
+		wanted nickname
+	nickname request response s>c
+		boolean [accepted / nickname taken]
+		
+		
+		
+		
+client send post
+server gets the post (source, dest, message)
+lookup locale object from LID
+locale.recieve(source, message)
+user.recieve(source, message)
+network.sendToUser(source, message)
